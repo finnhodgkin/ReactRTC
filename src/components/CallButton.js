@@ -4,6 +4,7 @@ import styled from 'styled-components'
 const CallBtn = styled.button`
   width: 5rem;
   height: 5rem;
+  cursor: pointer;
   border-radius: 50%;
   color: grey;
   margin: 0 2rem;

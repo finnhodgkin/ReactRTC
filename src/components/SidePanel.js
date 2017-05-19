@@ -12,7 +12,7 @@ const Panel = styled.aside`
   position: relative;
   background-color: rgba(200, 200, 200, 1);
   display: inline-block;
-
+  box-sizing: border-box;
 `
 
 export const SidePanel = (props) => {

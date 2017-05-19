@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 const SmallVideoBox = styled.video`
-  width: 25%;
+  width: 20%;
   height: auto;
   background-color: white;
   border: 1px solid black;
@@ -13,6 +13,6 @@ const SmallVideoBox = styled.video`
 
 export const SmallScreen = (props) => {
   return (
-    <SmallVideoBox {...props}/>
+    <SmallVideoBox src={props.localStreamUrl} autoPlay='true' {...props}/>
   )
 }

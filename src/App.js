@@ -29,7 +29,26 @@ class App extends Component {
     ],
     callState: 'IDLE',
     sidePanel: true,
+		userMedia: null,
+		localStreamUrl: null,
   }
+
+	componentDidMount() {
+		const userMediaPromise = navigator.mediaDevices.getUserMedia({ video: true })
+
+		userMediaPromise
+			.then(stream => {
+				const localStreamUrl = window.URL.createObjectURL(stream)
+				this.setState({ localStreamUrl })
+			})
+
+		this.setState({ userMediaPromise })
+	}
+
+	toggleSidePanel = () => {
+		const panel = !this.state.sidePanel
+		this.setState({ sidePanel: panel })
+	}
 
   render() {
     return (
@@ -42,6 +61,8 @@ class App extends Component {
           callState={this.state.callState}
           nameSelected={this.state.nameSelected}
           sidePanel={this.state.sidePanel}
+					toggleSidePanel={this.toggleSidePanel}
+					localStreamUrl={this.state.localStreamUrl}
         />
       </Container>
     )
