@@ -29,8 +29,9 @@ class App extends Component {
     ],
     callState: 'IDLE',
     sidePanel: true,
-		userMedia: null,
+		userMediaPromise: null,
 		localStreamUrl: null,
+		remoteStreamUrl: null,
   }
 
 	componentDidMount() {
@@ -63,6 +64,7 @@ class App extends Component {
           sidePanel={this.state.sidePanel}
 					toggleSidePanel={this.toggleSidePanel}
 					localStreamUrl={this.state.localStreamUrl}
+					remoteStreamUrl={this.state.remoteStreamUrl}
         />
       </Container>
     )

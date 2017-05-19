@@ -62,7 +62,7 @@ const SidePanelToggle = styled.button`
 export const PhoneBox = (props) => {
   return (
     <MainPanel sidePanel={props.sidePanel}>
-      <VideoBox {...props} />
+      <VideoBox src={props.remoteStreamUrl} autoPlay='true' {...props} />
       <SmallScreen localStreamUrl={props.localStreamUrl} {...props} />
       <ControlPanel {...props} />
       <SidePanelToggle onClick={props.toggleSidePanel} sidePanel={props.sidePanel}/>

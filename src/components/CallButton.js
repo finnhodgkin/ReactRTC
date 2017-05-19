@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import phone from './../phone-icon.svg'
 
 const CallBtn = styled.button`
   width: 5rem;
@@ -21,6 +22,21 @@ const CallBtn = styled.button`
   border-style: none;
   outline: none;
   display: inline-block;
+  background-image: url(${phone});
+  background-size: 65%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  transition: 0.2s transform ease;
+  ${props => {
+      if (['CALLER', 'CALLED'].indexOf(props.callState) !== -1) {
+        return 'transform: rotate(135deg);'
+      } else if (props.nameSelected) {
+        return ''
+      } else {
+        return 'transform: rotate(90deg);'
+      }
+    }
+  }
 `
 
 export const CallButton = (props) => {
