@@ -6,7 +6,7 @@ const CallBtn = styled.button`
   height: 5rem;
   border-radius: 50%;
   color: grey;
-  margin: 0, 2rem;
+  margin: 0 2rem;
   background-color: ${props => {
       if (['CALLER', 'CALLED'].indexOf(props.callState) !== -1) {
         return 'rgba(214, 51, 51, 1)'
@@ -24,6 +24,6 @@ const CallBtn = styled.button`
 
 export const CallButton = (props) => {
   return (
-    <CallBtn callState={props.callState} canCall={props.nameSelected}></CallBtn>
+    <CallBtn {...props}></CallBtn>
   )
 }

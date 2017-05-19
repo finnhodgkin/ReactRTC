@@ -1,18 +1,18 @@
 import React from 'react'
 import styled from 'styled-components'
-import { UserList } from './ControlPanel'
+import { User } from './User'
 
-const Panel = styled.aside`
-  width: 30%;
-  height: 100vh;
-  transition: all .3s ease;
+const Users = styled.aside`
+  width: 100%;
   position: relative;
+  box-sizing: border-box;
+  margin-top: 5rem;
 `
 
-export const PhoneBox = (props) => {
+export const UserList = (props) => {
   return (
-    <Panel>
-      <UserList />
-    </Panel>
+    <Users>
+      {props.users.map(user => <User {...user}/>)}
+    </Users>
   )
 }
