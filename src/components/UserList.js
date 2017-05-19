@@ -12,7 +12,7 @@ const Users = styled.aside`
 export const UserList = (props) => {
   return (
     <Users>
-      {props.users.map(user => <User {...user}/>)}
+      {props.users.map(user => <User key={user.name} {...user}/>)}
     </Users>
   )
 }

@@ -13,6 +13,7 @@ const MainPanel = styled.section`
   position: relative;
   display: inline-block;
   vertical-align: top;
+  overflow: hidden;
 `
 
 const VideoBox = styled.video`
