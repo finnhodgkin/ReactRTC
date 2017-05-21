@@ -17,8 +17,8 @@ export const ControlPanel = (props) => {
   return (
     <Controls>
       <ControlWrap>
-        <CallButton />
-        <CallButton />
+        {/* <CallButton />
+        <CallButton /> */}
         <CallButton {...props}/>
       </ControlWrap>
     </Controls>

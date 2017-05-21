@@ -12,7 +12,10 @@ const UserItem = styled.aside`
 
 export const User = (props) => {
   return (
-    <UserItem>
+    <UserItem  onClick={() => {
+      console.log('hi');
+      props.selectUser(props.name)
+    }} >
       {props.name}
     </UserItem>
   )
