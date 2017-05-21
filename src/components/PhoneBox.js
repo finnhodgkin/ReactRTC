@@ -22,6 +22,7 @@ const VideoBox = styled.video`
   transition: all .3s ease;
   position: absolute;
   display: inline-block;
+  ${props => props.remoteStreamUrl ? 'background-color: black;' : 'display: none;'}
 `
 
 const SidePanelToggle = styled.button`

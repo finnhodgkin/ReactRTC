@@ -24,7 +24,7 @@ const Container = styled.main`
 
 class App extends Component {
   state = {
-		name: 'Finn',
+		name: ['Finn', 'Tom'][Math.floor(Math.random() * 2)],
     nameSelected: '',
     users: [
       {
@@ -65,27 +65,47 @@ class App extends Component {
 		userMediaPromise
 			.then(stream => {
 				const localStreamUrl = window.URL.createObjectURL(stream)
-				this.setState({ localStreamUrl, remoteMediaPromise: remoteStream( stream ) })
+				this.setState({ localStreamUrl, remoteMediaPromise: this.remoteStream( stream ) })
 			})
 	}
 
+	remoteStream = localStream => {
+	  const remoteMediaPromise = new RTCPeerConnection()
+
+	  remoteMediaPromise.addStream(localStream)
+
+	  remoteMediaPromise.onaddstream = ({ stream }) => {
+	    const remoteStreamUrl = window.URL.createObjectURL(stream)
+	    this.setState({ remoteStreamUrl })
+	  }
+
+	  return remoteMediaPromise
+	}
+
 	setSocketName = (name) => {
+		console.log('happening')
 		this.state.socket.on(name, ({from, method, data}) => {
+			console.log('GOT SEND')
 			switch (method) {
 				case 'CALL-REQUEST':
 					this.recievingCall(from)
+					console.log('GOT REQUEST')
 					break
 				case 'ACCEPTED-CALL':
 					this.sendHandShake(from)
+					console.log('ACCEPTED')
 					break
 				case 'SEND-HANDSHAKE':
 					this.replyHandshake(from, data)
+					console.log('SEND HANDSHAKE')
 					break
 				case 'REPLY-HANDSHAKE':
 					this.setHandshake(from, data)
+					console.log('REPLY HANDSHAKE')
 					break
 				case 'CANDIDATE':
 					this.setCandidate(from, data)
+					console.log('SENT CANDIDATE')
 					break
 				default:
 					console.log('INCORRECT METHOD SENT FROM SERVER');
@@ -116,7 +136,8 @@ class App extends Component {
 	}
 
 	startCall = () => {
-		if (this.state.callState === 'IDLE' && this.state.nameSelected) {
+		console.log(this.state.callState);
+		if (this.state.callState === 'IDLE' && this.state.nameSelected && this.state.nameSelected !== this.state.name) {
 			this.setState({ callState: 'DIALING' })
 			this.send(this.state.nameSelected, 'CALL-REQUEST')
 			this.setUserCallState(this.state.nameSelected, 'DIALING')
@@ -130,7 +151,7 @@ class App extends Component {
 
 	acceptCall = (from) => {
 		if (this.state.callState === 'IDLE') {
-			this.setState({ callState: 'INCALL-IN' })
+			this.setState({ callState: 'INCALL-IN', inCallWith: from })
 			const setUser = this.setUserCallState(from, 'CALLWITH')
 			if (setUser) {
 				this.send(from, 'ACCEPTED-CALL')
@@ -142,14 +163,13 @@ class App extends Component {
 
 	sendHandShake = (from) => {
 		if (this.state.callState === 'DIALING') {
-			this.setState({ callState: 'INCALL-OUT' })
+			this.setState({ callState: 'INCALL-OUT', inCallWith: from })
 			this.setUserCallState(from, 'CALLWITH')
 			this.state.remoteMediaPromise
 				.createOffer({ offerToReceiveVideo: 1, offerToReceiveAudio: 0 })
 				.then(offer => {
-					this.peerConnection.setLocalDescription(offer)
+					this.state.remoteMediaPromise.setLocalDescription(offer)
 					this.send(from, 'SEND-HANDSHAKE', offer)
-					this.attachMedia(this.videoMe)
 				})
 		}
 	}
@@ -160,8 +180,8 @@ class App extends Component {
 			this.state.remoteMediaPromise
 				.setRemoteDescription(offer)
 				.then(() => {
-					this.peerConnection.createAnswer().then(answer => {
-						this.peerConnection.setLocalDescription(answer);
+					this.state.remoteMediaPromise.createAnswer().then(answer => {
+						this.state.remoteMediaPromise.setLocalDescription(answer);
 						this.send(from, 'REPLY-HANDSHAKE', answer);
 					});
 			});
@@ -189,14 +209,37 @@ class App extends Component {
 		}
 	}
 
+	setCandidate = (from, candidate) => {
+		if (candidate) {
+			const iceCandidate = new RTCIceCandidate(candidate);
+			this.state.remoteMediaPromise.addIceCandidate(iceCandidate);
+		}
+	}
+
 	toggleSidePanel = () => {
 		const panel = !this.state.sidePanel
 		this.setState({ sidePanel: panel })
 	}
 
 	selectUser = (user) => {
-		const name = this.state.nameSelected === user ? '' : user
-		this.setState({ nameSelected: name })
+		const index = this.state.users.findIndex(selected => selected.name === user)
+		console.log(index);
+		if (index !== -1 && this.state.users[index].callState === 'RINGING') {
+			this.acceptCall(user)
+		} else {
+			const name = this.state.nameSelected === user ? '' : user
+			this.setState({ nameSelected: name })
+		}
+	}
+
+	hangUpCall() {
+		console.log('Hangup');
+		if (this.state.callState !== 'IDLE') {
+			this.setState({ callState: 'IDLE' })
+			this.send(this.state.inCallWith, 'END_CALL');
+			this.state.remoteMediaPromise.close();
+			this.setState({ remoteMediaPromise: null, remoteStreamUrl: null, inCallWith: null })
+		}
 	}
 
   render() {
@@ -214,6 +257,8 @@ class App extends Component {
 					toggleSidePanel={this.toggleSidePanel}
 					localStreamUrl={this.state.localStreamUrl}
 					remoteStreamUrl={this.state.remoteStreamUrl}
+					makeCall={this.startCall.bind(this)}
+					hangUpCall={this.hangUpCall.bind(this)}
         />
       </Container>
     )
