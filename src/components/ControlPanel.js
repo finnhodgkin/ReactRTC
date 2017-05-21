@@ -17,9 +17,14 @@ export const ControlPanel = (props) => {
   return (
     <Controls>
       <ControlWrap>
-        <CallButton />
-        <CallButton />
-        <CallButton {...props}/>
+        {/* <CallButton />
+        <CallButton /> */}
+        <CallButton onClick={() => {
+          console.log('hi');
+          ['INCALL-IN','INCALL-OUT'].indexOf(props.callState) !== -1 ?
+            props.hangUpCall() :
+            props.makeCall()
+        }} {...props}/>
       </ControlWrap>
     </Controls>
   )

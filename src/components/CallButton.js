@@ -10,7 +10,7 @@ const CallBtn = styled.button`
   color: grey;
   margin: 0 2rem;
   background-color: ${props => {
-      if (['CALLER', 'CALLED'].indexOf(props.callState) !== -1) {
+      if (['INCALL-IN', 'INCALL-OUT'].indexOf(props.callState) !== -1) {
         return 'rgba(214, 51, 51, 1)'
       } else if (props.nameSelected) {
         return 'rgba(72, 209, 94, 1)'
@@ -28,7 +28,7 @@ const CallBtn = styled.button`
   background-position: center center;
   transition: 0.2s transform ease;
   ${props => {
-      if (['CALLER', 'CALLED'].indexOf(props.callState) !== -1) {
+      if (['INCALL-IN', 'INCALL-OUT'].indexOf(props.callState) !== -1) {
         return 'transform: rotate(135deg);'
       } else if (props.nameSelected) {
         return ''
